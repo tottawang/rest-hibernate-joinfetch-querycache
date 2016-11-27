@@ -1,0 +1,1 @@
+# rest-hibernate-joinfetch-querycache
