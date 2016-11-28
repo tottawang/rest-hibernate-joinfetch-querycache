@@ -31,6 +31,9 @@ public class RestResource {
     return userDao.getByUserId(Integer.valueOf(1)).getName();
   }
 
+  //////////////////////////////////////////////////////////////////////
+  // get projects for a single user
+
   /**
    * Get the lazy loading collection by calling size()
    * 
@@ -39,9 +42,10 @@ public class RestResource {
   @GET
   @Path("get-user-projects")
   public List<Project> getUserProjects() {
-    Hibernate.initialize(userDao.getByUserId(Integer.valueOf(1)).getProjects());
+    User user = userDao.getByUserId(Integer.valueOf(1));
+    Hibernate.initialize(user.getProjects());
     // or call userDao.getByUserId(Integer.valueOf(1)).getProjects().size();
-    return userDao.getByUserId(Integer.valueOf(1)).getProjects();
+    return user.getProjects();
   }
 
   @GET
@@ -50,5 +54,35 @@ public class RestResource {
     User user = userDao.getProjectsByUserId(Integer.valueOf(1)).get(0);
     user.getProjects().size();
     return user.getProjects();
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // get projects for multiple users
+
+  /**
+   * Best solution: one join fetch query to load users and their projects enabled query cache, so
+   * only one query can happen when call the endoints multiple times
+   * 
+   * @return
+   */
+  @GET
+  @Path("get-users-by-type")
+  public List<User> getUsersByType() {
+    List<User> users = userDao.getProjectsByUserType("x");
+    users.forEach(user -> Hibernate.initialize(user));
+    return users;
+  }
+
+  /**
+   * N+1 performance issue.
+   * 
+   * @return
+   */
+  @GET
+  @Path("get-users-by-type-no-join-fetch")
+  public List<User> getUserByTypeNoJoinFetch() {
+    List<User> users = userDao.getUsersByType("x");
+    users.forEach(user -> Hibernate.initialize(user.getProjects()));
+    return users;
   }
 }
