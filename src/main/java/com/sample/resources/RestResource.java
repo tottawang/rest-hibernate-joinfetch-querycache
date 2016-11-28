@@ -51,7 +51,7 @@ public class RestResource {
   @GET
   @Path("get-user-projects-query-cache")
   public List<Project> getUserProjectsByNamedQuery() {
-    User user = userDao.getProjectsByUserId(Integer.valueOf(1)).get(0);
+    User user = userDao.getUserProjectsById(Integer.valueOf(1));
     user.getProjects().size();
     return user.getProjects();
   }
@@ -61,21 +61,21 @@ public class RestResource {
 
   /**
    * Best solution: one join fetch query to load users and their projects with query cache enabled,
-   * so only one query can happen when call the endpoints multiple times
+   * only one query happens when calling the endpoints multiple times
    * 
    * @return
    */
   @GET
   @Path("get-users-by-type")
   public List<User> getUsersByType() {
-    List<User> users = userDao.getProjectsByUserType("x");
+    List<User> users = userDao.getUsersProjectsByType("x");
     users.forEach(user -> Hibernate.initialize(user.getProjects()));
     return users;
   }
 
   /**
-   * N+1 performance issue. You see one query for users and N queries for queries by user Due to
-   * cache, N+1 round-trip to database only happen once. After that, data loads from cache.
+   * N+1 performance issue. You see one query for users and N queries for queries by user. Due to
+   * cache, N+1 round-trip to database only happen once. After that, data loads from cache
    * 
    * @return
    */

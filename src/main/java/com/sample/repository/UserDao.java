@@ -27,25 +27,24 @@ public class UserDao {
     return (User) getSession().load(User.class, id);
   }
 
-  public User getUserProjectsByUserId(Integer id) {
-    return (User) getSession().load(User.class, id);
-  }
-
-  @SuppressWarnings("unchecked")
-  public List<User> getProjectsByUserId(Integer id) {
-    return getSession().getNamedQuery(User.FETCH_USER_PROJECTS).setParameter("userId", id)
-        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setCacheable(true).list();
-  }
-
-  @SuppressWarnings("unchecked")
-  public List<User> getProjectsByUserType(String type) {
-    return getSession().getNamedQuery(User.FETCH_USERS_PROJECTS_BY_TYPE).setParameter("type", type)
-        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setCacheable(true).list();
-  }
-
   @SuppressWarnings("unchecked")
   public List<User> getUsersByType(String type) {
     return getSession().getNamedQuery(User.FETCH_USERS_TYPE).setParameter("type", type)
         .setCacheable(true).list();
   }
+
+  //////////////////////////////////////////////////////////////////////
+  // join fetch to load user with projects
+
+  public User getUserProjectsById(Integer id) {
+    return (User) getSession().getNamedQuery(User.FETCH_USER_PROJECTS).setParameter("userId", id)
+        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setCacheable(true).uniqueResult();
+  }
+
+  @SuppressWarnings("unchecked")
+  public List<User> getUsersProjectsByType(String type) {
+    return getSession().getNamedQuery(User.FETCH_USERS_PROJECTS_BY_TYPE).setParameter("type", type)
+        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setCacheable(true).list();
+  }
+
 }
