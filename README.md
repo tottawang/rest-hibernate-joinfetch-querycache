@@ -18,4 +18,4 @@ java -jar build/libs/sample-0.0.1-SNAPSHOT.jar
 ### Test
 Run curl http://localhost:{your_sever_port}/api/get-users-by-type
 This query return multiple users with projects
-Call the endpoints multiples will only see one round-trip to database thanks to query cache.
+Call the endpoint multiples will only see one round-trip to database thanks to query cache.
