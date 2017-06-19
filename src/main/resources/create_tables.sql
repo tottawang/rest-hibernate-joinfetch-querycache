@@ -1,7 +1,8 @@
 CREATE TABLE public.account
 (
-  userid integer NOT NULL,
+  userid integer NOT NULL,ß
   name character varying(100) NOT NULL,
+  type character varying(50) NOT NULL,
   CONSTRAINT account_pkey PRIMARY KEY (userid)
 )
 WITH (
